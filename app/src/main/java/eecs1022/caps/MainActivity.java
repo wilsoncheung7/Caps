@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private int scores=0;
@@ -30,43 +31,50 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void doneClicked(View v){
+        try {
+            TextView numView=findViewById(R.id.qNum);
+            TextView scoreView=findViewById(R.id.score);
+            TextView quesView=findViewById(R.id.question);
+            EditText ansView=findViewById(R.id.answer);
 
-        TextView numView=findViewById(R.id.qNum);
-        String qNum="Q#"+count;
-        numView.setText(qNum);
-        if (count>9) {
-            String over = "Game Over";
-            numView.setText(over);
-            done.setEnabled(false);
+            String qNum="Q#"+count;
+            String answer=ansView.getText().toString();
+            String[] qa =game.qa().split("\n",2);
+
+            if(answer.toLowerCase().equals(qa[1].toLowerCase()))
+                scores++;
+
+            String score="SCORE "+scores;
+
+            numView.setText(qNum);
+            scoreView.setText(score);
+            quesView.setText(qa[0]);
+
+            if (count>8) {
+                String over = "Game Over";
+                numView.setText(over);
+                done.setEnabled(false);
+            }
+            count++;
+
+            if (scores>8)
+                scores=8;
+
+            result+=qNum+qa[0]+"\n"
+                    +"Your answer: "
+                    +answer
+                    +"\n"
+                    +"Correct answer: "
+                    +qa[1]
+                    +"\n\n";
+
+            ((TextView)findViewById(R.id.log)).setText(result);
         }
-        count++;
 
-        TextView scoreView=findViewById(R.id.score);
-        String score="SCORE "+scores;
-        scoreView.setText(score);
-        if (scores>8)
-            scores=8;
-
-        TextView quesView=findViewById(R.id.question);
-        String qa[]=game.qa().split("\n",2);
-
-        quesView.setText(qa[0]);
-
-        EditText ansView=findViewById(R.id.answer);
-        String answer=ansView.getText().toString();
-
-        if(answer.toLowerCase().equals(qa[1].toLowerCase()))
-            scores++;
-
-        result+=qNum+qa[0]+"\n"
-                +"Your answer: "
-                +answer
-                +"\n"
-                +"Correct answer: "
-                +qa[1]
-                +"\n\n";
-
-        ((TextView)findViewById(R.id.log)).setText(result);
+        catch (Exception e){
+            Toast toast=Toast.makeText(this,e.getMessage(),Toast.LENGTH_LONG);
+            toast.show();
+        }
     }
 
 }
